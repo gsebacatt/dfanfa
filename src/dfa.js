@@ -16,18 +16,20 @@ function Minimize(dfa){
 
 //Subconjuntos
 function toDfa(nfa){
-    //Recordar que el nfa es un stack
+    console.log(nfa)
+    //Recordar que el nfa es un stack en un array
    let dfa = new Set();
 
-   dfa.add(getEClosure(nfa, nfa.pop()))
+    dfa.add(getEclosure(nfa.start));
 
     dfa.forEach(state => {
+        console.log(state)
         if(!state.marked){
            state.marked = true;
 
 
            L.forEach(symbol => {
-               let U  = getEClosure(mover(state, symbol), state);
+               let U  = getEClosure(mover(dfa,state, symbol));
 
                if(!dfa.has(U)){
                    U.marked = true;
@@ -40,21 +42,22 @@ function toDfa(nfa){
 }
 
 
-function mover(state,symbol){
 
+//Para que eclosure funcione, mover deberia retornar un estado
+function mover(dfa, state,symbol){
+   let tempSet = new Set(...dfa[state], symbol);
+   return tempSet;
 }
 
 
-function getEClosure(nfa, initialState){
+function getEClosure(initialState){
     let closure  = new Set();
 
     let neighbours = initialState.epsilonTransitions;
 
-    if( neighbours.lenght > 0){
-        neighbours.forEach(neighbour => {
-            closure.add(getEClosure(nfa,vecino))
-        })
-    }
+    neighbours.forEach(neighbour => {
+            closure.add(getEClosure(neighbour))
+    })
 
     return closure;
 
