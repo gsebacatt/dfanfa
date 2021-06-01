@@ -56,7 +56,7 @@ function toDfa(nfa) {
                 let U = new Set();
 
                 T.forEach(t => {
-                    U.add(getEClosure(t));
+                    U.union(getEClosure(t));
                 })
 
                 if (!dfa.has(U)) {
@@ -67,6 +67,8 @@ function toDfa(nfa) {
 
         }
     })
+
+    return dfa;
 }
 
 function mover(state, symbol) {
