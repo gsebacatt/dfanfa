@@ -3,7 +3,7 @@ const readline = require('readline');
 
 const match = createMatcher('(a|b)*c');
 
-return;
+//return;
 
 const rl = readline.createInterface({
     input: process.stdin,

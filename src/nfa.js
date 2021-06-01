@@ -3,15 +3,17 @@
 */
 
 /*
-  A state in Thompson's NFA can either have 
+  A state in Thompson's NFA can either have
    - a single symbol transition to a state
     or
    - up to two epsilon transitions to another states
-  but not both.   
+  but not both.
 */
 function createState(isEnd) {
     return {
         isEnd,
+        //marked para la conversion a dfa
+        marked: false,
         transition: {},
         epsilonTransitions: []
     };
@@ -39,7 +41,7 @@ function fromEpsilon() {
     return { start, end };
 }
 
-/* 
+/*
    Construct an NFA that recognizes only a single character string.
 */
 function fromSymbol(symbol) {
@@ -50,7 +52,7 @@ function fromSymbol(symbol) {
     return { start, end };
 }
 
-/* 
+/*
    Concatenates two NFAs.
 */
 function concat(first, second) {
@@ -60,7 +62,7 @@ function concat(first, second) {
     return { start: first.start, end: second.end };
 }
 
-/* 
+/*
    Unions two NFAs.
 */
 function union(first, second) {
@@ -79,7 +81,7 @@ function union(first, second) {
 }
 
 
-/* 
+/*
    Apply Closure (Kleene's Star) on an NFA.
 */
 function closure(nfa) {
@@ -225,8 +227,8 @@ function toNFAFromInfixExp(infixExp) {
 
 /*
   Process a string through an NFA by recurisively (depth-first) traversing all the possible paths until finding a matching one.
-  
-  The NFA has N states, from each state it can go to at most N possible states, yet there might be at most 2^N possible paths, 
+
+  The NFA has N states, from each state it can go to at most N possible states, yet there might be at most 2^N possible paths,
   therefore, worst case it'll end up going through all of them until it finds a match (or not), resulting in very slow runtimes.
 */
 function recursiveBacktrackingSearch(state, visited, input, position) {
@@ -261,7 +263,7 @@ function recursiveBacktrackingSearch(state, visited, input, position) {
     }
 }
 
-/* 
+/*
    Follows through the epsilon transitions of a state until reaching
    a state with a symbol transition which gets added to the set of next states.
 */
