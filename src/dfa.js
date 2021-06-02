@@ -7,7 +7,7 @@ module.exports = {
 
 
 //Tener definido el lenguaje
-const L = ['a', 'b', 'c'];
+const L = ['a', 'b', 'c', 'd', 'e','f','g','h','i','j','k'];
 
 
 function Minimize(dfa) {
