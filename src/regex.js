@@ -3,24 +3,18 @@ const { toNFA, toNFAFromInfixExp, recognize } = require('./nfa');
 const {toDfa, getEClosure, mover}  = require('./dfa');
 
 function createMatcher(exp) {
-    // Generates an NFA using a stack
+    // Genera un NFA usando un stack
     const expWithConcatenationOperator = insertExplicitConcatOperator(exp);
     const postfixExp = toPostfix(expWithConcatenationOperator);
     const nfa = toNFA(postfixExp);
 
    // console.log(getEClosure(nfa.start))
 
-    //Generates a DFA with Powerset Construction
+    //Genera un DFA mediante construccion de subconjuntos
     //const dfa  = toDfa(nfa)
     //const mDfa  = minimize(dfa)
 
-
-    // Generates an NFA by constructing a parse tree
-    // No explicit concatenation operator required
-    //const nfa = toNFAFromInfixExp(exp);
-
-
-
+    //Reconoce la cadena con el nda, dfa o dfa minimizado
     return word => recognize(nfa, word);
 }
 

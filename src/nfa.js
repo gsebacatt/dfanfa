@@ -1,13 +1,5 @@
 /*
-  Thompson NFA Construction and Search.
-*/
-
-/*
-  A state in Thompson's NFA can either have
-   - a single symbol transition to a state
-    or
-   - up to two epsilon transitions to another states
-  but not both.
+  Objecto representativo de un estado en el e-NFA
 */
 function createState(isEnd) {
     return {
@@ -24,14 +16,14 @@ function addEpsilonTransition(from, to) {
 }
 
 /*
-  Thompson's NFA state can have only one transition to another state for a given symbol.
+  Agrega transiciones (ni epsilon) al NDA
 */
 function addTransition(from, to, symbol) {
     from.transition[symbol] = to;
 }
 
 /*
-  Construct an NFA that recognizes only the empty string.
+  NFA que reconoce solo cadenas vacias
 */
 function fromEpsilon() {
     const start = createState(false);
@@ -42,7 +34,7 @@ function fromEpsilon() {
 }
 
 /*
-   Construct an NFA that recognizes only a single character string.
+   NFA que reconoce un solo caracter
 */
 function fromSymbol(symbol) {
     const start = createState(false);
@@ -53,7 +45,7 @@ function fromSymbol(symbol) {
 }
 
 /*
-   Concatenates two NFAs.
+   Thompson para concatenaciones
 */
 function concat(first, second) {
     addEpsilonTransition(first.end, second.start);
@@ -63,7 +55,7 @@ function concat(first, second) {
 }
 
 /*
-   Unions two NFAs.
+   Thompson para uniones
 */
 function union(first, second) {
     const start = createState(false);
@@ -82,7 +74,7 @@ function union(first, second) {
 
 
 /*
-   Apply Closure (Kleene's Star) on an NFA.
+    Cierre Kleene de Thompson
 */
 function closure(nfa) {
     const start = createState(false);
@@ -99,7 +91,7 @@ function closure(nfa) {
 }
 
 /*
-    Zero-or-one of an NFA.
+    Thompson para simbolo ? en regex
 */
 
 function zeroOrOne(nfa) {
@@ -116,7 +108,7 @@ function zeroOrOne(nfa) {
 }
 
 /*
-    One on more of an NFA.
+    Thompson para simbolo + en regex
 */
 
 function oneOrMore(nfa) {
@@ -132,7 +124,7 @@ function oneOrMore(nfa) {
 }
 
 /*
-  Converts a postfix regular expression into a Thompson NFA.
+  Convierte una expresion regular postfi en un NFA mediante Thompson
 */
 function toNFA(postfixExp) {
     if (postfixExp === '') {
@@ -164,9 +156,6 @@ function toNFA(postfixExp) {
     return stack.pop();
 }
 
-/*
-  Regex to NFA construction using a parse tree.
-*/
 const { toParseTree } = require('./parser2');
 
 function toNFAfromParseTree(root) {
@@ -225,12 +214,6 @@ function toNFAFromInfixExp(infixExp) {
     return toNFAfromParseTree(toParseTree(infixExp));
 }
 
-/*
-  Process a string through an NFA by recurisively (depth-first) traversing all the possible paths until finding a matching one.
-
-  The NFA has N states, from each state it can go to at most N possible states, yet there might be at most 2^N possible paths,
-  therefore, worst case it'll end up going through all of them until it finds a match (or not), resulting in very slow runtimes.
-*/
 function recursiveBacktrackingSearch(state, visited, input, position) {
     if (visited.includes(state)) {
         return false;
@@ -264,8 +247,8 @@ function recursiveBacktrackingSearch(state, visited, input, position) {
 }
 
 /*
-   Follows through the epsilon transitions of a state until reaching
-   a state with a symbol transition which gets added to the set of next states.
+   Explora las transiciones epsilon de un estado hasta encontrar otro estado con una transicion (no episilon)
+   Y agrega al array nextStates
 */
 function addNextState(state, nextStates, visited) {
     if (state.epsilonTransitions.length) {
@@ -281,15 +264,12 @@ function addNextState(state, nextStates, visited) {
 }
 
 /*
-  Process a string through an NFA. For each input symbol it transitions into in multiple states at the same time.
-  The string is matched if after reading the last symbol, is has transitioned into at least one end state.
-
-  For an NFA with N states in can be at at most N states at a time. This algorighm finds a match by processing the input word once.
+  Por cada simbolo, se desplaza a varios estados al mismo tiempo
+  Hay match con el string en el automata si al leer el ultimo simbolo se llego al estado final
 */
 function search(nfa, word) {
     let currentStates = [];
-    /* The initial set of current states is either the start state or
-       the set of states reachable by epsilon transitions from the start state */
+    /* El estado inicial serai nfa.start o los estados alcanzables por transiciones epsilon desde nfa.start */
     addNextState(nfa.start, currentStates, []);
 
     for (const symbol of word) {
